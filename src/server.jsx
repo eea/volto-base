@@ -10,12 +10,15 @@ import { createMemoryHistory } from 'history';
 import { ReduxAsyncConnect, loadOnServer } from 'redux-connect';
 import { parse as parseUrl } from 'url';
 import { keys } from 'lodash';
-import Raven from 'raven';
+
+import request from 'request';
+
+// import Raven from 'raven';
 import cookie, { plugToRequest } from 'react-cookie';
 import locale from 'locale';
 
-import nlLocale from '@plone/volto/../locales/nl.json';
-import deLocale from '@plone/volto/../locales/de.json';
+// import nlLocale from '@plone/volto/../locales/nl.json';
+// import deLocale from '@plone/volto/../locales/de.json';
 import enLocale from '@plone/volto/../locales/en.json';
 import { detect } from 'detect-browser';
 
@@ -31,11 +34,9 @@ import userSession from '@plone/volto/reducers/userSession/userSession';
 import ErrorPage from '@plone/volto/error';
 import languages from '@plone/volto/constants/Languages';
 
-import request from 'request';
-
-import configureStore from './store';
 import routes from '~/routes';
 import { settings } from '~/config';
+import configureStore from './store';
 
 const url = require('url');
 
@@ -44,8 +45,8 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 const supported = new locale.Locales(keys(languages), 'en');
 const locales = {
   en: enLocale,
-  nl: nlLocale,
-  de: deLocale,
+  // nl: nlLocale,
+  // de: deLocale,
 };
 
 const server = express();
@@ -200,11 +201,11 @@ server
         .catch(error => {
           const errorPage = <ErrorPage message={error.message} />;
 
-          if (process.env.SENTRY_DSN) {
-            Raven.captureException(error.message, {
-              extra: JSON.stringify(error),
-            });
-          }
+          // if (process.env.SENTRY_DSN) {
+          //   Raven.captureException(error.message, {
+          //     extra: JSON.stringify(error),
+          //   });
+          // }
           res.set({
             'Cache-Control': 'public, max-age=60, no-transform',
           });
