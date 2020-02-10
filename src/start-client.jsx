@@ -7,7 +7,7 @@ import { ReduxAsyncConnect } from 'redux-connect';
 import routes from '~/routes';
 import '~/theme';
 
-import configureStore from '@plone/volto/store';
+import configureStore from './store';
 import { Api, persistAuthToken, ScrollToTop } from '@plone/volto/helpers';
 
 export const history = createBrowserHistory();
