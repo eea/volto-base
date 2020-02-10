@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/eea/volto-base/issues"
   },
-  "homepage": "https://github.com/eea/volto-base#readme"
+  "homepage": "https://github.com/eea/volto-base#readme",
+  "dependencies": {
+    "@datapunt/matomo-tracker-react": "0.0.16"
+  }
 }

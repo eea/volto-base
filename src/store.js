@@ -11,16 +11,17 @@ import reducers from '~/reducers';
 import { settings } from '~/config';
 import routes from '~/routes';
 
-// import { createInstance } from '@datapunt/matomo-tracker-react';
-// let matomo;
-// if (__CLIENT__) {
-//   matomo = createInstance({
-//     urlBase: 'https://matomo.eea.europa.eu/',
-//     siteId: 46, // optional, default value: `1`
-//     // trackerUrl: 'https://LINK.TO.DOMAIN/tracking.php', // optional, default value: `${urlBase}matomo.php`
-//     // srcUrl: 'https://LINK.TO.DOMAIN/tracking.js', // optional, default value: `${urlBase}matomo.js`
-//   });
-// }
+import { createInstance } from '@datapunt/matomo-tracker-react';
+
+let matomo;
+if (__CLIENT__) {
+  matomo = createInstance({
+    urlBase: 'https://matomo.eea.europa.eu/',
+    siteId: settings.matomoSiteId, // optional, default value: `1`
+    // trackerUrl: 'https://LINK.TO.DOMAIN/tracking.php', // optional, default value: `${urlBase}matomo.php`
+    // srcUrl: 'https://LINK.TO.DOMAIN/tracking.js', // optional, default value: `${urlBase}matomo.js`
+  });
+}
 
 const defaultRoutes = routes[0].routes;
 
@@ -142,40 +143,45 @@ function prefetch(state = {}, action = {}) {
   }
 }
 
-// const trackMatomo = ({ getState, dispatch }) => next => action => {
-//   if (typeof action === 'function') {
-//     return next(action);
-//   }
-//   switch (action.type) {
-//     case `@@router/LOCATION_CHANGE`:
-//       if (__CLIENT__ && action.payload?.prefetched) {
-//         const content = action.payload.prefetched;
-//         matomo.trackPageView({
-//           documentTitle: content.title || 'untitled',
-//           href: content['@id']
-//             .replace(settings.apiPath, '')
-//             .replace(settings.internalApiPath, ''),
-//         });
-//       }
-//       break;
-//     default:
-//   }
+const trackMatomo = ({ getState, dispatch }) => next => action => {
+  if (typeof action === 'function') {
+    return next(action);
+  }
+  switch (action.type) {
+    case `@@router/LOCATION_CHANGE`:
+      if (__CLIENT__ && action.payload?.prefetched) {
+        const content = action.payload.prefetched;
+        matomo.trackPageView({
+          documentTitle: content.title || 'untitled',
+          href: content['@id']
+            .replace(settings.apiPath, '')
+            .replace(settings.internalApiPath, ''),
+        });
+      }
+      break;
+    default:
+  }
 
-//   return next(action);
-// };
+  return next(action);
+};
 
 const configureStore = (initialState, history, apiHelper) => {
+  const defaultMiddleware = [
+    optimizeProvidersFetch,
+    precacheContentStart,
+    routerMiddleware(history),
+    crashReporter,
+    thunk,
+    api(apiHelper),
+    precacheContentEnd,
+  ];
+
+  if (settings.matomoSiteId) {
+    defaultMiddleware.push(trackMatomo);
+  }
+
   const middlewares = composeWithDevTools(
-    applyMiddleware(
-      optimizeProvidersFetch,
-      precacheContentStart,
-      routerMiddleware(history),
-      crashReporter,
-      thunk,
-      api(apiHelper),
-      precacheContentEnd,
-      //   trackMatomo,
-    ),
+    applyMiddleware(...defaultMiddleware),
   );
 
   const store = createStore(
