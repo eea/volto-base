@@ -3,7 +3,7 @@
 
 import http from 'http';
 
-import app from 'volto-corsproxy/server';
+import app from 'volto-base/server';
 
 export default () => {
   const server = http.createServer(app);
@@ -23,10 +23,10 @@ export default () => {
   return () => {
     console.log('✅  Server-side HMR Enabled!');
 
-    module.hot.accept('volto-corsproxy/server', () => {
-      console.log('🔁  HMR Reloading `volto-corsproxy/server`...');
+    module.hot.accept('volto-base/server', () => {
+      console.log('🔁  HMR Reloading `volto-base/server`...');
       server.removeListener('request', currentApp);
-      const newApp = require('volto-corsproxy/server').default; // eslint-disable-line global-require
+      const newApp = require('volto-base/server').default; // eslint-disable-line global-require
       server.on('request', newApp);
       currentApp = newApp;
     });
