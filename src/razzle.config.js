@@ -134,8 +134,6 @@ function BaseConfig(base) {
     modify: function(config, { target, dev }, webpack) {
       const vc = razzleModify(config, { target, dev }, webpack);
 
-      console.log(vc.resolve.alias);
-
       // The rule is: addon packages can customize Volto, but they can't
       // customize other addon packages
       // We (in the frontend package) can customize other addons
@@ -201,6 +199,10 @@ function BaseConfig(base) {
           ...vc.resolve.alias,
         };
       });
+
+      vc.resolve.alias['~'] = `${base}/src`;
+
+      console.log(vc.resolve.alias);
 
       // need to include /theme/ to less loader in order to have it working with volto as a submodule.
       const lessRule = vc.module.rules.find(

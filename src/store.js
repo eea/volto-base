@@ -7,8 +7,8 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { api, crashReporter } from '@plone/volto/middleware';
 import { matchPath } from 'react-router';
 
+import { settings, addonReducers } from '~/config'; // This needs to come before reducers import
 import reducers from '~/reducers';
-import { settings } from '~/config';
 import routes from '~/routes';
 
 import { createInstance } from '@datapunt/matomo-tracker-react';
@@ -184,10 +184,13 @@ const configureStore = (initialState, history, apiHelper) => {
     applyMiddleware(...defaultMiddleware),
   );
 
+  // console.log('addonrecuders store.js', addonReducers);
+
   const store = createStore(
     combineReducers({
       router: connectRouter(history),
       ...reducers,
+      ...addonReducers,
       prefetch,
     }),
     initialState,
