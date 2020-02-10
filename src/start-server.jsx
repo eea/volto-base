@@ -3,7 +3,8 @@
 
 import http from 'http';
 
-import app from 'volto-base/server';
+import app from './server';
+import * as Sentry from '@sentry/node';
 
 export default () => {
   const server = http.createServer(app);
@@ -29,6 +30,12 @@ export default () => {
       const newApp = require('volto-base/server').default; // eslint-disable-line global-require
       server.on('request', newApp);
       currentApp = newApp;
+
+      if (process.env.SENTRY_DSN) {
+        Sentry.init({
+          dsn: process.env.SENTRY_DSN,
+        });
+      }
     });
   };
 };

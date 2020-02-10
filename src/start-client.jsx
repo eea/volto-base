@@ -2,13 +2,18 @@ import React from 'react';
 import { hydrate } from 'react-dom';
 import { Provider } from 'react-intl-redux';
 import { ConnectedRouter } from 'connected-react-router';
+import * as Sentry from '@sentry/browser';
 import { createBrowserHistory } from 'history';
 import { ReduxAsyncConnect } from 'redux-connect';
+import { Api, persistAuthToken, ScrollToTop } from '@plone/volto/helpers';
 import routes from '~/routes';
 import '~/theme';
 
 import configureStore from './store';
-import { Api, persistAuthToken, ScrollToTop } from '@plone/volto/helpers';
+
+if (process.env.SENTRY_DSN) {
+  Sentry.init({ dsn: process.env.SENTRY_DSN });
+}
 
 export const history = createBrowserHistory();
 

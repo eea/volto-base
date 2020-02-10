@@ -14,7 +14,6 @@ import Raven from 'raven';
 import cookie, { plugToRequest } from 'react-cookie';
 import locale from 'locale';
 
-import routes from '~/routes';
 import nlLocale from '@plone/volto/../locales/nl.json';
 import deLocale from '@plone/volto/../locales/de.json';
 import enLocale from '@plone/volto/../locales/en.json';
@@ -31,10 +30,12 @@ import {
 import userSession from '@plone/volto/reducers/userSession/userSession';
 import ErrorPage from '@plone/volto/error';
 import languages from '@plone/volto/constants/Languages';
-import configureStore from 'volto-base/store';
 
-import { settings } from '~/config';
 import request from 'request';
+
+import configureStore from './store';
+import routes from '~/routes';
+import { settings } from '~/config';
 
 const url = require('url');
 
