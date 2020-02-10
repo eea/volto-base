@@ -1,0 +1,24 @@
+{
+  "name": "volto-base",
+  "version": "1.0.0",
+  "description": "Various basic Volto defaults for EEA projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eea/volto-base.git"
+  },
+  "keywords": [
+    "Volto",
+    "Plone",
+    "EEA"
+  ],
+  "author": "Tiberiu Ichim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eea/volto-base/issues"
+  },
+  "homepage": "https://github.com/eea/volto-base#readme"
+}
