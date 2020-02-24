@@ -1,6 +1,6 @@
-# volto-corsproxy
+# volto-base
 
-A replacement for the Volto server providing a builtin CORS proxy.
+A common place to put Volto common stuff. A replacement for the Volto server providing a builtin CORS proxy.
 
 To use it, replace your index.js with:
 
