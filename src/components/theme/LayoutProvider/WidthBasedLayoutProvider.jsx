@@ -1,7 +1,6 @@
 import React from 'react';
 import componentQueries from 'react-component-queries';
 import { compose } from 'redux';
-// import mosaic_width from '../../../addons/volto-mosaic/src/reducers/mosaic_width';
 import { connect } from 'react-redux';
 
 const WidthBasedLayoutProvider = WrappedComponent => props => {
