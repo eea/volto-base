@@ -99,7 +99,7 @@ function handleAll(req, res, next) {
           // json: req.body,
           // headers: { Authorization: req.header('Authorization') },
         },
-        function(error, response, body) {
+        function (error, response, body) {
           if (error) {
             console.error('error: ' + response.statusCode);
           }
@@ -192,14 +192,19 @@ server
             res.status(200).send(
               `<!doctype html>
                 ${renderToString(
-                  <Html assets={assets} markup={markup} store={store} />,
-                )}
+                <Html assets={assets} markup={markup} store={store} />,
+              )}
               `,
             );
           }
         })
         .catch(error => {
-          const errorPage = <ErrorPage message={error.message} />;
+          const errorPage = (
+            <Provider store={store}>
+              <ErrorPage message={error.message} />
+            </Provider>
+          )
+            ;
 
           // if (process.env.SENTRY_DSN) {
           //   Raven.captureException(error.message, {
