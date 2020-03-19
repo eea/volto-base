@@ -185,17 +185,17 @@ server
               </StaticRouter>
             </Provider>,
           );
-
+          const html = `<!doctype html>
+            ${renderToString(
+              <Html assets={assets} markup={markup} store={store} />,
+            )}
+          `;
           if (context.url) {
             res.redirect(context.url);
+          } else if (context.status) {
+            res.status(context.status).send(html);
           } else {
-            res.status(200).send(
-              `<!doctype html>
-                ${renderToString(
-                <Html assets={assets} markup={markup} store={store} />,
-              )}
-              `,
-            );
+            res.status(200).send(html);
           }
         })
         .catch(error => {
