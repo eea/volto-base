@@ -1,6 +1,9 @@
 const glob = require('glob').sync;
 const path = require('path');
 const fs = require('fs');
+const autoprefixer = require('autoprefixer');
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const CompressionPlugin = require('compression-webpack-plugin');
 
@@ -44,7 +47,7 @@ function customizeVoltoByAddon(voltoPath, addon, aliases) {
     if (!fs.existsSync(origVoltoPath)) {
       console.warn(
         `Addon ${
-          addon.name
+        addon.name
         } customizes non-existing Volto file: ${origPath} at ${origVoltoPath}`,
       );
     }
@@ -52,9 +55,9 @@ function customizeVoltoByAddon(voltoPath, addon, aliases) {
     if (Object.keys(aliases).includes(origPath)) {
       console.warn(
         `Addon ${
-          addon.name
+        addon.name
         } customizes already existing alias: ${origPath} set to ${
-          aliases[origPath]
+        aliases[origPath]
         }`,
       );
     }
@@ -117,7 +120,7 @@ function resolveVoltoPath(base) {
     if (pkg === '@plone/volto') {
       voltoPath = `./${jsConfig.compilerOptions.baseUrl}/${
         pathsConfig[pkg][0]
-      }`;
+        }`;
     }
   });
 
@@ -131,7 +134,7 @@ function BaseConfig(base) {
   const razzleModify = config.modify;
 
   return {
-    modify: function(config, { target, dev }, webpack) {
+    modify: function (config, { target, dev }, webpack) {
       const vc = razzleModify(config, { target, dev }, webpack);
 
       // The rule is: addon packages can customize Volto, but they can't
@@ -178,7 +181,7 @@ function BaseConfig(base) {
       const addonsCustomizationPath = path.join(
         projectRootPath,
         require(`${projectRootPath}/package.json`).addonsCustomizationPath ||
-          'src/customizations',
+        'src/customizations',
       );
 
       jsConfig.addons.forEach(name => {
@@ -204,22 +207,95 @@ function BaseConfig(base) {
 
       console.log(vc.resolve.alias);
 
+      const BASE_CSS_LOADER = {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 2,
+          sourceMap: true,
+          localIdentName: '[name]__[local]___[hash:base64:5]',
+        },
+      };
+      const POST_CSS_LOADER = {
+        loader: require.resolve('postcss-loader'),
+        options: {
+          sourceMap: true,
+          // Necessary for external CSS imports to work
+          // https://github.com/facebookincubator/create-react-app/issues/2677
+          ident: 'postcss',
+          plugins: () => [
+            require('postcss-flexbugs-fixes'),
+            autoprefixer({
+              flexbox: 'no-2009',
+            }),
+          ],
+        },
+      };
+
+      const LESSLOADER = {
+        test: /\.less$/,
+        include: [
+          path.resolve('./theme'),
+          /node_modules\/@plone\/volto\/theme/,
+          /plone\.volto\/theme/,
+          /node_modules\/semantic-ui-less/,
+          /src\/develop/
+        ],
+        use: dev
+          ? [
+            // {
+            //   loader: 'style-loader',
+            // },
+            MiniCssExtractPlugin.loader,
+            BASE_CSS_LOADER,
+            POST_CSS_LOADER,
+            {
+              loader: 'less-loader',
+              options: {
+                outputStyle: 'expanded',
+                sourceMap: true,
+              },
+            },
+          ]
+          : [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 2,
+                sourceMap: true,
+                modules: false,
+                localIdentName: '[name]__[local]___[hash:base64:5]',
+              },
+            },
+            POST_CSS_LOADER,
+            {
+              loader: 'less-loader',
+              options: {
+                outputStyle: 'expanded',
+                sourceMap: true,
+              },
+            },
+          ],
+      };
+
+
+
       // need to include /theme/ to less loader in order to have it working with volto as a submodule.
       const lessRule = vc.module.rules.find(
-      module => module.test && module.test.toString() == /\.less$/, // eslint-disable-line
+        module => module.test && module.test.toString() == /\.less$/, // eslint-disable-line
       );
       const index = vc.module.rules.indexOf(lessRule);
-      lessRule.include.push(/src\/develop\/volto\/theme/);
-      vc.module.rules[index] = lessRule;
+      vc.module.rules[index] = LESSLOADER;
 
       const jsxRule = vc.module.rules.find(
-      module => module.test && module.test.toString() == /\.(js|jsx|mjs)$/, // eslint-disable-line
+        module => module.test && module.test.toString() == /\.(js|jsx|mjs)$/, // eslint-disable-line
       );
       const jsxIndex = vc.module.rules.indexOf(jsxRule);
       jsxRule.exclude = [/src\/develop\/.+\/node_modules/];
       vc.module.rules[jsxIndex] = jsxRule;
 
       vc.plugins.push(new CompressionPlugin());
+      vc.plugins.push(new MiniCssExtractPlugin())
 
       // console.log('aliases', vc.resolve.alias);
       // console.log('----');
