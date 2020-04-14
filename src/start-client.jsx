@@ -8,6 +8,8 @@ import { ReduxAsyncConnect } from 'redux-connect';
 import { Api, persistAuthToken, ScrollToTop } from '@plone/volto/helpers';
 import routes from '~/routes';
 import '~/theme';
+import { loadableReady } from '@loadable/component';
+
 
 import configureStore from './store';
 
@@ -22,15 +24,17 @@ export default () => {
 
   const store = configureStore(window.__data, history, api);
   persistAuthToken(store);
+  loadableReady(() => {
+    hydrate(
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <ScrollToTop>
+            <ReduxAsyncConnect routes={routes} helpers={api} />
+          </ScrollToTop>
+        </ConnectedRouter>
+      </Provider>,
+      document.getElementById('main'),
+    );
+  });
 
-  hydrate(
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <ScrollToTop>
-          <ReduxAsyncConnect routes={routes} helpers={api} />
-        </ScrollToTop>
-      </ConnectedRouter>
-    </Provider>,
-    document.getElementById('main'),
-  );
 };
