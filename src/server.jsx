@@ -21,6 +21,8 @@ import locale from 'locale';
 // import deLocale from '@plone/volto/../locales/de.json';
 import enLocale from '@plone/volto/../locales/en.json';
 import { detect } from 'detect-browser';
+import path from 'path';
+import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 
 import {
   Html,
@@ -148,6 +150,12 @@ server
       initialEntries: [req.url],
     });
 
+    // @loadable/server extractor
+    const extractor = new ChunkExtractor({
+      statsFile: path.resolve('build/loadable-stats.json'),
+      entrypoints: ['client'],
+    });
+
     // Create a new Redux store instance
     const store = configureStore(initialState, history, api);
 
@@ -179,15 +187,17 @@ server
         .then(() => {
           const context = {};
           const markup = renderToString(
-            <Provider store={store}>
-              <StaticRouter context={context} location={req.url}>
-                <ReduxAsyncConnect routes={routes} helpers={api} />
-              </StaticRouter>
-            </Provider>,
+            <ChunkExtractorManager extractor={extractor}>
+              <Provider store={store}>
+                <StaticRouter context={context} location={req.url}>
+                  <ReduxAsyncConnect routes={routes} helpers={api} />
+                </StaticRouter>
+              </Provider>
+            </ChunkExtractorManager>,
           );
           const html = `<!doctype html>
             ${renderToString(
-              <Html assets={assets} markup={markup} store={store} />,
+              <Html extractor={extractor} markup={markup} store={store} />,
             )}
           `;
           if (context.url) {
