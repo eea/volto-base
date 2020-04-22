@@ -294,7 +294,16 @@ function BaseConfig(base) {
       vc.module.rules[jsxIndex] = jsxRule;
 
       vc.plugins.push(new CompressionPlugin());
-      vc.plugins.push(new MiniCssExtractPlugin());
+      vc.plugins.push(
+        new MiniCssExtractPlugin({
+          filename: 'static/css/bundle.[contenthash:8].css',
+          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+          // allChunks: true because we want all css to be included in the main
+          // css bundle when doing code splitting to avoid FOUC:
+          // https://github.com/facebook/create-react-app/issues/2415
+          allChunks: true,
+        }),
+      );
 
       // console.log('aliases', vc.resolve.alias);
       // console.log('----');
