@@ -47,7 +47,7 @@ function customizeVoltoByAddon(voltoPath, addon, aliases) {
     if (!fs.existsSync(origVoltoPath)) {
       console.warn(
         `Addon ${
-        addon.name
+          addon.name
         } customizes non-existing Volto file: ${origPath} at ${origVoltoPath}`,
       );
     }
@@ -55,9 +55,9 @@ function customizeVoltoByAddon(voltoPath, addon, aliases) {
     if (Object.keys(aliases).includes(origPath)) {
       console.warn(
         `Addon ${
-        addon.name
+          addon.name
         } customizes already existing alias: ${origPath} set to ${
-        aliases[origPath]
+          aliases[origPath]
         }`,
       );
     }
@@ -120,7 +120,7 @@ function resolveVoltoPath(base) {
     if (pkg === '@plone/volto') {
       voltoPath = `./${jsConfig.compilerOptions.baseUrl}/${
         pathsConfig[pkg][0]
-        }`;
+      }`;
     }
   });
 
@@ -134,7 +134,7 @@ function BaseConfig(base) {
   const razzleModify = config.modify;
 
   return {
-    modify: function (config, { target, dev }, webpack) {
+    modify: function(config, { target, dev }, webpack) {
       const vc = razzleModify(config, { target, dev }, webpack);
 
       // The rule is: addon packages can customize Volto, but they can't
@@ -181,7 +181,7 @@ function BaseConfig(base) {
       const addonsCustomizationPath = path.join(
         projectRootPath,
         require(`${projectRootPath}/package.json`).addonsCustomizationPath ||
-        'src/customizations',
+          'src/customizations',
       );
 
       jsConfig.addons.forEach(name => {
@@ -204,6 +204,7 @@ function BaseConfig(base) {
       });
 
       vc.resolve.alias['~'] = `${base}/src`;
+      vc.resolve.alias['volto-themes'] = `${voltoPath}/theme/themes`;
 
       console.log(vc.resolve.alias);
 
@@ -238,47 +239,45 @@ function BaseConfig(base) {
           /node_modules\/@plone\/volto\/theme/,
           /plone\.volto\/theme/,
           /node_modules\/semantic-ui-less/,
-          /src\/develop/
+          /src\/develop/,
         ],
         use: dev
           ? [
-            // {
-            //   loader: 'style-loader',
-            // },
-            MiniCssExtractPlugin.loader,
-            BASE_CSS_LOADER,
-            POST_CSS_LOADER,
-            {
-              loader: 'less-loader',
-              options: {
-                outputStyle: 'expanded',
-                sourceMap: true,
+              {
+                loader: 'style-loader',
               },
-            },
-          ]
+              // MiniCssExtractPlugin.loader,
+              BASE_CSS_LOADER,
+              POST_CSS_LOADER,
+              {
+                loader: 'less-loader',
+                options: {
+                  outputStyle: 'expanded',
+                  sourceMap: true,
+                },
+              },
+            ]
           : [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 2,
-                sourceMap: true,
-                modules: false,
-                localIdentName: '[name]__[local]___[hash:base64:5]',
+              MiniCssExtractPlugin.loader,
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 2,
+                  sourceMap: true,
+                  modules: false,
+                  localIdentName: '[name]__[local]___[hash:base64:5]',
+                },
               },
-            },
-            POST_CSS_LOADER,
-            {
-              loader: 'less-loader',
-              options: {
-                outputStyle: 'expanded',
-                sourceMap: true,
+              POST_CSS_LOADER,
+              {
+                loader: 'less-loader',
+                options: {
+                  outputStyle: 'expanded',
+                  sourceMap: true,
+                },
               },
-            },
-          ],
+            ],
       };
-
-
 
       // need to include /theme/ to less loader in order to have it working with volto as a submodule.
       const lessRule = vc.module.rules.find(
@@ -295,7 +294,7 @@ function BaseConfig(base) {
       vc.module.rules[jsxIndex] = jsxRule;
 
       vc.plugins.push(new CompressionPlugin());
-      vc.plugins.push(new MiniCssExtractPlugin())
+      vc.plugins.push(new MiniCssExtractPlugin());
 
       // console.log('aliases', vc.resolve.alias);
       // console.log('----');

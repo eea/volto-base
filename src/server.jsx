@@ -42,7 +42,7 @@ import configureStore from './store';
 
 const url = require('url');
 
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+// const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const supported = new locale.Locales(keys(languages), 'en');
 const locales = {
@@ -101,7 +101,7 @@ function handleAll(req, res, next) {
           // json: req.body,
           // headers: { Authorization: req.header('Authorization') },
         },
-        function (error, response, body) {
+        function(error, response, body) {
           if (error) {
             console.error('error: ' + response.statusCode);
           }
@@ -213,9 +213,7 @@ server
             <Provider store={store}>
               <ErrorPage message={error.message} />
             </Provider>
-          )
-            ;
-
+          );
           // if (process.env.SENTRY_DSN) {
           //   Raven.captureException(error.message, {
           //     extra: JSON.stringify(error),

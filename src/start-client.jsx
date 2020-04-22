@@ -10,7 +10,6 @@ import routes from '~/routes';
 import '~/theme';
 import { loadableReady } from '@loadable/component';
 
-
 import configureStore from './store';
 
 if (process.env.SENTRY_DSN) {
@@ -36,5 +35,4 @@ export default () => {
       document.getElementById('main'),
     );
   });
-
 };
