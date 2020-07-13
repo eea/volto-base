@@ -23,7 +23,7 @@ if (__CLIENT__) {
   });
 }
 
-const defaultRoutes = routes[0].routes;
+const defaultRoutes = routes[2].routes;
 
 const PREFETCH_ROUTER_LOCATION_CHANGE = 'PREFETCH_ROUTER_LOCATION_CHANGE';
 
