@@ -170,7 +170,8 @@ server
       });
     } else if (
       req.path.match(/(.*)\/@@images\/(.*)/) ||
-      req.path.match(/(.*)\/@@download\/(.*)/)
+      req.path.match(/(.*)\/@@download\/(.*)/) ||
+      req.path.match(/(.*)\/@@rdf(.*)/)
     ) {
       getAPIResourceWithAuth(req).then(resource => {
         res.set('Content-Type', resource.headers['content-type']);
